@@ -10,7 +10,7 @@ import XCTest
 
 class CategoryModelTests: XCTestCase {
     
-    //DTO XCTest
+    //Locally : DTO XCTest
     func test_decodeCategoryDTO() throws {
        
         let json = """
@@ -28,7 +28,7 @@ class CategoryModelTests: XCTestCase {
         XCTAssertEqual(categoryDTO.name, "Category 1")
     }
     
-    //Mapper + Entity XCTest
+    //Locally : Mapper + Entity XCTest
     func test_Map2CategoryEntity() throws {
        
         let dto = CategoryDTO(id: 99, name: "Category 99")
@@ -39,5 +39,16 @@ class CategoryModelTests: XCTestCase {
         //assertion
         XCTAssertEqual(entity.id, 99)
         XCTAssertEqual(entity.name, "Category 99")
+    }
+    
+    //Network : DTO + Mapper + Entity XCTest
+    func test_getCategories() async throws {
+               
+        //categories
+        let entities = try await CategoryRepository.getCategories(data: CategoryService.fetch())
+        
+        //assertion
+        XCTAssertEqual(entities.first?.id, 1)
+        XCTAssertEqual(entities.first?.name, "Véhicule")
     }
 }
