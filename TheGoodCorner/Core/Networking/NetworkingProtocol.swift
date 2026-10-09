@@ -8,5 +8,5 @@ import Foundation
 
 protocol NetworkingProtocol {
     
-    static func fetch() async throws -> Data
+     func fetch() async throws -> Data
 }

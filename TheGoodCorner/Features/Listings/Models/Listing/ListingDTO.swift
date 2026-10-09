@@ -33,3 +33,9 @@ struct imagesUrl: Codable  {
     var small:String?
     var thumb:String?
 }
+
+
+struct Listings: Codable  {
+    var page:Int?
+    var items:[ListingDTO]
+}

@@ -44,7 +44,7 @@ class ListingModelTests: XCTestCase {
 
     }
     
-    //Mapper + Entity XCTest
+    //Mapper + Entity : Integ XCTest
     func test_Map2ListingEntity() throws {
        
         let dto = ListingDTO(
@@ -70,5 +70,17 @@ class ListingModelTests: XCTestCase {
         XCTAssertEqual(entity.creationDate, "2019-11-06T11:22:35Z")
         XCTAssertEqual(entity.imageSmall, "/images/ad-small/5877f940762daca3548cb19d89324098fb116356.jpg")
         XCTAssertEqual(entity.imageThumb, "/images/ad-thumb/5877f940762daca3548cb19d89324098fb116356.jpg")
+    }
+    
+    //Network : DTO + Mapper + Entity XCTest
+    func test_getListings() async throws {
+               
+        //listings
+        let entities = try await ListingRepository().getListings(data: ListingService().fetch())
+        
+        //assertion
+        XCTAssertEqual(entities.first?.id, 1547408955)
+        XCTAssertEqual(entities.first?.price, 10)
+        XCTAssertEqual(entities.first?.title, "Vinyle Elliott Murphy Just A Story From America")
     }
 }

@@ -9,7 +9,7 @@ import Foundation
 
 class CategoryRepository {
     
-    static func getCategories(data:Data) throws -> [CategoryEntity] {
+     func getCategories(data:Data) throws -> [CategoryEntity] {
                 
         return try JSONDecoder().decode([CategoryDTO].self, from: data).map { dto in
             CategoryMapper.map(dto: dto)

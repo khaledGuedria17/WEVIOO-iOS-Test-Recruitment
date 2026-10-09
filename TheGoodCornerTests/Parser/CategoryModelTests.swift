@@ -45,7 +45,7 @@ class CategoryModelTests: XCTestCase {
     func test_getCategories() async throws {
                
         //categories
-        let entities = try await CategoryRepository.getCategories(data: CategoryService.fetch())
+        let entities = try await CategoryRepository().getCategories(data: CategoryService().fetch())
         
         //assertion
         XCTAssertEqual(entities.first?.id, 1)
