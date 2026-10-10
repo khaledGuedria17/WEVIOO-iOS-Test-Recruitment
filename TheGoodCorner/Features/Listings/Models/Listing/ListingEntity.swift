@@ -5,7 +5,7 @@
 //  Created by Khaled Guedria on 8/10/2026.
 //
 
-struct ListingEntity : Equatable, Identifiable {
+struct ListingEntity : Equatable, Identifiable, Hashable {
     //var
     var id:Int?
     var title:String?

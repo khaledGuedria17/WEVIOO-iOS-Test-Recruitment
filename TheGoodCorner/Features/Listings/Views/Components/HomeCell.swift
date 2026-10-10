@@ -11,7 +11,7 @@ import SwiftUI
 struct HomeCell: View {
     let listing: ListingEntity
     let categoryName: String
-    var isFavorite: Bool = false
+    //var isFavorite: Bool = false
 
     var onTap: (() -> Void)? = nil
 
@@ -35,9 +35,8 @@ struct HomeCell: View {
             return "Price unavailable"
         }
 
-        return NumberFormatter.localizedString(
-            from: NSNumber(value: price),
-            number: .ordinal
+        return price.formatted(
+            .currency(code: "EUR").locale(Locale(identifier: "fr_FR"))
         )
     }
 
@@ -82,20 +81,20 @@ struct HomeCell: View {
 
                 Spacer(minLength: 0)
 
-                Text(formattedPrice)
-                    .font(.system(size: 21, weight: .bold))
-                    .foregroundStyle(
-                        listing.isUrgent == true
-                        ? Color.marketplaceOrange
-                        : Color.marketplaceText
-                    )
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
+                HStack {
+                    Spacer()
+                    Text(formattedPrice)
+                        .font(.system(size: 21, weight: .bold))
+                        .foregroundStyle(
+                            listing.isUrgent == true
+                            ? Color.marketplaceOrange
+                            : Color.marketplaceText
+                        )
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                }
 
-                Text(listing.creationDate ?? "")
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundStyle(Color.marketplaceSecondary)
-                    .lineLimit(1)
+                
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .frame(height: 132)

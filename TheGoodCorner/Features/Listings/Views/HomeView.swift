@@ -10,62 +10,66 @@ import SwiftUI
 
 struct HomeView: View {
     @StateObject private var viewModel: HomeViewModel
+    @State private var selectedListing: ListingEntity?
+    @State private var showDetails = false
 
     init(viewModel: HomeViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
 
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 24) {
-                header
-
-                SearchView(searchText: $viewModel.searchText)
-
-                CategoriesView(
-                    categories: viewModel.categories,
-                    selectedCategoryId: $viewModel.selectedCategoryId
-                )
-
-                feedHeader
-
-                if viewModel.isLoading && viewModel.listings.isEmpty {
-                    ProgressView("Loading listings...")
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 40)
-
-                } else if let error = viewModel.errorMessage,
-                          viewModel.listings.isEmpty {
-                    errorView(error)
-
-                } else if viewModel.filteredListings.isEmpty {
-                    if #available(iOS 17.0, *) {
-                        ContentUnavailableView(
-                            "No listings found",
-                            systemImage: "magnifyingglass",
-                            description: Text(
-                                "Try another search or category."
+        NavigationStack {
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 24) {
+                    header
+                    
+                    SearchView(searchText: $viewModel.searchText)
+                    
+                    CategoriesView(
+                        categories: viewModel.categories,
+                        selectedCategoryId: $viewModel.selectedCategoryId
+                    )
+                    
+                    feedHeader
+                    
+                    if viewModel.isLoading && viewModel.listings.isEmpty {
+                        ProgressView("Loading listings...")
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 40)
+                        
+                    } else if let error = viewModel.errorMessage,
+                              viewModel.listings.isEmpty {
+                        errorView(error)
+                        
+                    } else if viewModel.filteredListings.isEmpty {
+                        if #available(iOS 17.0, *) {
+                            ContentUnavailableView(
+                                "No listings found",
+                                systemImage: "magnifyingglass",
+                                description: Text(
+                                    "Try another search or category."
+                                )
                             )
-                        )
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 30)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 30)
+                        } else {
+                            // Fallback on earlier versions
+                        }
+                        
                     } else {
-                        // Fallback on earlier versions
+                        listingFeed
                     }
-
-                } else {
-                    listingFeed
                 }
+                .padding(.horizontal, 16)
+                .padding(.top, 12)
+                .padding(.bottom, 24)
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 12)
-            .padding(.bottom, 24)
-        }
-        .background(
-            Color.marketplaceBackground.ignoresSafeArea()
-        )
-        .task {
-            await viewModel.loadHome()
+            .background(
+                Color.marketplaceBackground.ignoresSafeArea()
+            )
+            .task {
+                await viewModel.loadHome()
+            }
         }
     }
 
@@ -79,7 +83,7 @@ struct HomeView: View {
 
     private var feedHeader: some View {
         HStack(spacing: 10) {
-            Text("FEED STREAM")
+            Text("Feed Stream")
                 .font(.system(size: 13, weight: .bold))
                 .foregroundStyle(Color.marketplaceSecondary)
 
@@ -132,12 +136,18 @@ struct HomeView: View {
                         for: listing.categoryId
                     ),
                     onTap: {
-                        // ViewModel integration:
-                        // Navigate to listing details using listing.id.
+                        selectedListing = listing
+                        showDetails = true
+
                     }
                 )
             }
         }
+        .navigationDestination(isPresented: $showDetails) {
+                if let listing = selectedListing {
+                    ListingDetailsView(listing: listing)
+                }
+            }
     }
 
     private func errorView(_ message: String) -> some View {
